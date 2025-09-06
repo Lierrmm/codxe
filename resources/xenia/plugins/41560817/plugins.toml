@@ -4,8 +4,7 @@ media_id = "2C8C0267" # Disc (USA, Europe): http://redump.org/disc/11809/
 
 # TU9
 [[plugin]]
-author = "mo"
-name = "codxe"
+
 file = "codxe.xex"
 hash = "0BF957FE8ABE4B7C" # default.xex
 is_enabled = true
