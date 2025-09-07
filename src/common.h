@@ -2,7 +2,10 @@
 
 // Standard library includes
 #include <array>
+#include <cassert>
 #include <cstddef>
+#include <cstdint>
+#include <cstring>
 #include <vector>
 #include <string>
 #include <memory>
@@ -10,8 +13,6 @@
 #include <set>
 #include <algorithm>
 #include <functional>
-#include <cstdint>
-#include <cstring>
 #include <direct.h>
 #include <fstream>
 #include <sstream>
@@ -55,6 +56,10 @@ using namespace std::tr1;
 #include "game/iw4/sp/main.h"
 #include "game/iw4/sp/structs.h"
 #include "game/iw4/sp/symbols.h"
+
+#include "game/iw4/mp/main.h"
+#include "game/iw4/mp/structs.h"
+#include "game/iw4/mp/symbols.h"
 
 // IW5-specific includes
 #include "game/iw5/mp/main.h"
