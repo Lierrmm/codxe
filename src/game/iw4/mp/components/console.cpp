@@ -361,7 +361,7 @@ void Console::HandleInput()
     if (keystroke.Flags == 0 || keystroke.Flags & XINPUT_KEYSTROKE_KEYUP)
         return;
 
-    DbgPrint("Key pressed: %c (VK: %d)", keystroke.Unicode, keystroke.VirtualKey);
+    // DbgPrint("Key pressed: %c (VK: %d)", keystroke.Unicode, keystroke.VirtualKey);
 
     // Toggle console with tilde key
     if (keystroke.VirtualKey == VK_OEM_3)
