@@ -65,19 +65,349 @@ struct dvar_t
     dvar_t *hashNext;
 };
 
-struct playerState_s
+enum ViewLockTypes : __int32
 {
-    char padding1[0xC];
-    uint32_t pm_flags;
-    char padding2[0xC];
+    PLAYERVIEWLOCK_NONE = 0x0,
+    PLAYERVIEWLOCK_FULL = 0x1,
+    PLAYERVIEWLOCK_WEAPONJITTER = 0x2,
+    PLAYERVIEWLOCKCOUNT = 0x3,
+};
+
+struct SprintState
+{
+    int sprintButtonUpRequired;
+    int sprintDelay;
+    int lastSprintStart;
+    int lastSprintEnd;
+    int sprintStartMaxLength;
+};
+
+struct MantleState
+{
+    float yaw;
+    int timer;
+    int transIndex;
+    int flags;
+};
+
+struct PlayerActiveWeaponState
+{
+    int weapAnim;
+    int weaponTime;
+    int weaponDelay;
+    int weaponRestrictKickTime;
+    int weaponState;
+    int weapHandFlags;
+    unsigned int weaponShotCount;
+};
+
+struct PlayerEquippedWeaponState
+{
+    bool usedBefore;
+    bool dualWielding;
+    unsigned __int8 weaponModel;
+    bool needsRechamber[2];
+};
+
+enum OffhandClass : __int32
+{
+    OFFHAND_CLASS_NONE = 0x0,
+    OFFHAND_CLASS_FRAG_GRENADE = 0x1,
+    OFFHAND_CLASS_SMOKE_GRENADE = 0x2,
+    OFFHAND_CLASS_FLASH_GRENADE = 0x3,
+    OFFHAND_CLASS_THROWINGKNIFE = 0x4,
+    OFFHAND_CLASS_OTHER = 0x5,
+    OFFHAND_CLASS_COUNT = 0x6,
+};
+
+enum PlayerHandIndex : __int32
+{
+    WEAPON_HAND_RIGHT = 0x0,
+    WEAPON_HAND_LEFT = 0x1,
+    NUM_WEAPON_HANDS = 0x2,
+    WEAPON_HAND_DEFAULT = 0x0,
+};
+
+struct GlobalAmmo
+{
+    int ammoType;
+    int ammoCount;
+};
+
+struct ClipAmmo
+{
+    int clipIndex;
+    int ammoCount[2];
+};
+
+struct PlayerWeaponCommonState
+{
+    int offHandIndex;
+    OffhandClass offhandPrimary;
+    OffhandClass offhandSecondary;
+    unsigned int weapon;
+    unsigned int primaryWeaponForAltMode;
+    int weapFlags;
+    float fWeaponPosFrac;
+    float aimSpreadScale;
+    int adsDelayTime;
+    int spreadOverride;
+    int spreadOverrideState;
+    PlayerHandIndex lastWeaponHand;
+    GlobalAmmo ammoNotInClip[15];
+    ClipAmmo ammoInClip[15];
+    int weapLockFlags;
+    int weapLockedEntnum;
+    float weapLockedPos[3];
+    int weaponIdleTime;
+};
+
+enum ActionSlotType : __int32
+{
+    ACTIONSLOTTYPE_DONOTHING = 0x0,
+    ACTIONSLOTTYPE_SPECIFYWEAPON = 0x1,
+    ACTIONSLOTTYPE_ALTWEAPONTOGGLE = 0x2,
+    ACTIONSLOTTYPE_NIGHTVISION = 0x3,
+    ACTIONSLOTTYPECOUNT = 0x4,
+};
+
+struct ActionSlotParam_SpecifyWeapon
+{
+    unsigned int index;
+};
+
+struct ActionSlotParam
+{
+    ActionSlotParam_SpecifyWeapon specifyWeapon;
+};
+
+enum objectiveState_t : __int32
+{
+    OBJST_EMPTY = 0x0,
+    OBJST_ACTIVE = 0x1,
+    OBJST_INVISIBLE = 0x2,
+    OBJST_DONE = 0x3,
+    OBJST_CURRENT = 0x4,
+    OBJST_FAILED = 0x5,
+    OBJST_NUMSTATES = 0x6,
+};
+
+struct objective_t
+{
+    objectiveState_t state;
+    float origin[3];
+    int entNum;
+    int teamNum;
+    int icon;
+};
+
+enum he_type_t : __int32
+{
+    HE_TYPE_FREE = 0x0,
+    HE_TYPE_TEXT = 0x1,
+    HE_TYPE_VALUE = 0x2,
+    HE_TYPE_PLAYERNAME = 0x3,
+    HE_TYPE_MAPNAME = 0x4,
+    HE_TYPE_GAMETYPE = 0x5,
+    HE_TYPE_MATERIAL = 0x6,
+    HE_TYPE_TIMER_DOWN = 0x7,
+    HE_TYPE_TIMER_UP = 0x8,
+    HE_TYPE_TENTHS_TIMER_DOWN = 0x9,
+    HE_TYPE_TENTHS_TIMER_UP = 0xA,
+    HE_TYPE_CLOCK_DOWN = 0xB,
+    HE_TYPE_CLOCK_UP = 0xC,
+    HE_TYPE_WAYPOINT = 0xD,
+    HE_TYPE_COUNT = 0xE,
+};
+
+struct $0D0CB43DF22755AD856C77DD3F304010
+{
+    unsigned __int8 r;
+    unsigned __int8 g;
+    unsigned __int8 b;
+    unsigned __int8 a;
+};
+
+union hudelem_color_t
+{
+    $0D0CB43DF22755AD856C77DD3F304010 __s0;
+    int rgba;
+};
+
+struct hudelem_s
+{
+    he_type_t type;
+    float x;
+    float y;
+    float z;
+    int targetEntNum;
+    float fontScale;
+    float fromFontScale;
+    int fontScaleStartTime;
+    int fontScaleTime;
+    int font;
+    int alignOrg;
+    int alignScreen;
+    hudelem_color_t color;
+    hudelem_color_t fromColor;
+    int fadeStartTime;
+    int fadeTime;
+    int label;
+    int width;
+    int height;
+    int materialIndex;
+    int fromWidth;
+    int fromHeight;
+    int scaleStartTime;
+    int scaleTime;
+    float fromX;
+    float fromY;
+    int fromAlignOrg;
+    int fromAlignScreen;
+    int moveStartTime;
+    int moveTime;
+    int time;
+    int duration;
+    float value;
+    int text;
+    float sort;
+    hudelem_color_t glowColor;
+    int fxBirthTime;
+    int fxLetterTime;
+    int fxDecayStartTime;
+    int fxDecayDuration;
+    int soundID;
+    int flags;
+};
+
+struct playerState_s_hud
+{
+    hudelem_s current[31];
+    hudelem_s archival[31];
+};
+
+struct __declspec(align(128)) playerState_s
+{
+    int commandTime;
+    int pm_type;
+    int pm_time;
+    int pm_flags;
+    int otherFlags;
+    int linkFlags;
+    int bobCycle;
     float origin[3];
     float velocity[3];
-    char padding3[44];
+    int grenadeTimeLeft;
+    int throwbackGrenadeOwner;
+    int throwbackGrenadeTimeLeft;
+    unsigned int throwbackWeaponIndex;
+    int remoteEyesEnt;
+    int remoteEyesTagname;
+    int remoteControlEnt;
+    int foliageSoundTime;
+    int gravity;
+    float leanf;
+    int speed;
     float delta_angles[3];
-    char padding4[160];
-    float viewAngles[3];
-    char padding5[0x3068];
+    int groundEntityNum;
+    float vLadderVec[3];
+    int jumpTime;
+    float jumpOriginZ;
+    int legsTimer;
+    int legsAnim;
+    int torsoTimer;
+    int torsoAnim;
+    int legsAnimDuration;
+    int torsoAnimDuration;
+    int damageTimer;
+    int damageDuration;
+    int flinchYawAnim;
+    int corpseIndex;
+    int movementDir;
+    int eFlags;
+    int eventSequence;
+    int events[4];
+    unsigned int eventParms[4];
+    int oldEventSequence;
+    int unpredictableEventSequence;
+    int unpredictableEventSequenceOld;
+    int unpredictableEvents[4];
+    unsigned int unpredictableEventParms[4];
+    int clientNum;
+    int viewmodelIndex;
+    float viewangles[3];
+    int viewHeightTarget;
+    float viewHeightCurrent;
+    int viewHeightLerpTime;
+    int viewHeightLerpTarget;
+    int viewHeightLerpDown;
+    float viewAngleClampBase[2];
+    float viewAngleClampRange[2];
+    int damageEvent;
+    int damageYaw;
+    int damagePitch;
+    int damageCount;
+    int damageFlags;
+    int stats[4];
+    float proneDirection;
+    float proneDirectionPitch;
+    float proneTorsoPitch;
+    ViewLockTypes viewlocked;
+    int viewlocked_entNum;
+    float linkAngles[3];
+    float linkWeaponAngles[3];
+    int linkWeaponEnt;
+    int loopSound;
+    int cursorHint;
+    int cursorHintString;
+    int cursorHintEntIndex;
+    int cursorHintDualWield;
+    int iCompassPlayerInfo;
+    int radarEnabled;
+    int radarBlocked;
+    int radarMode;
+    int locationSelectionInfo;
+    SprintState sprintState;
+    float holdBreathScale;
+    int holdBreathTimer;
+    float moveSpeedScaleMultiplier;
+    MantleState mantleState;
+    PlayerActiveWeaponState weapState[2];
+    unsigned int weaponsEquipped[15];
+    PlayerEquippedWeaponState weapEquippedData[15];
+    PlayerWeaponCommonState weapCommon;
+    float meleeChargeYaw;
+    int meleeChargeDist;
+    int meleeChargeTime;
+    unsigned int perks[2];
+    unsigned int perkSlots[8];
+    ActionSlotType actionSlotType[4];
+    ActionSlotParam actionSlotParam[4];
+    int weaponHudIconOverrides[6];
+    int animScriptedType;
+    int shellshockIndex;
+    int shellshockTime;
+    int shellshockDuration;
+    float dofNearStart;
+    float dofNearEnd;
+    float dofFarStart;
+    float dofFarEnd;
+    float dofNearBlur;
+    float dofFarBlur;
+    float dofViewmodelStart;
+    float dofViewmodelEnd;
+    objective_t objective[32];
+    int deltaTime;
+    int killCamEntity;
+    int killCamLookAtEntity;
+    int killCamClientNum;
+    playerState_s_hud hud;
+    unsigned int partBits[5];
+    int recoilScale;
+    int diveDirection;
+    int stunTime;
 };
+
 static_assert(sizeof(playerState_s) == 12672, "");
 static_assert(offsetof(playerState_s, velocity) == 40, "");
 static_assert(offsetof(playerState_s, delta_angles) == 96, "");
@@ -886,9 +1216,18 @@ struct __declspec(align(64)) clipMap_t
     unsigned int checksum;
 };
 
+struct RawFile
+{
+    const char *name;
+    int compressedLen;
+    int len;
+    const char *buffer;
+};
+
 union XAssetHeader
 {
     clipMap_t *clipMap;
+    RawFile *rawfile;
     void *data;
 };
 
