@@ -6,6 +6,8 @@ It supports both physical Xbox 360 consoles and emulation via Xenia.
 
 WHY? As a fun project to explore modding the CoD games I grew up with, and to provide a more flexible and powerful modding experience.
 
+Why the name? CoDxe comes from Call of Duty and Xenon — short, simple, and on brand.
+
 ## Requirements
 
 To run CoDxe, you will need one of the following:
@@ -37,7 +39,7 @@ To run CoDxe, you will need one of the following:
 
 ## Call of Duty 4
 
-Loading single player maps is not stable so things may or may not work.
+Loading single player maps in multiplayer is a best effort approach. Lots of things are broken such as missing FX, player models, crashes etc.
 
 | Name                | Xbox 360 | Xenia |
 | ------------------- | :------: | :---: |
@@ -64,7 +66,7 @@ Loading single player maps is not stable so things may or may not work.
 | village_assault.ff  |    ❌    |  🟢   |
 | village_defend.ff   |    ❌    |  🟢   |
 
-NOTE: Xenia requires the patch [patch](<resources/xenia/patches/415607E6 - Call of Duty 4 Modern Warfare MP (TU4).patch.toml>) to increase memory installed.
+NOTE: Xenia requires the [patch](<resources/xenia/patches/415607E6 - Call of Duty 4 Modern Warfare MP (TU4).patch.toml>) to increase memory installed.
 
 ## Features
 
