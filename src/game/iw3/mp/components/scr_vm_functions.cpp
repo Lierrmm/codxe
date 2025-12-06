@@ -36,8 +36,21 @@ void GSCrGetPlayerclipBrushesContainingPoint()
     }
 }
 
+void GScr_CbufAddText()
+{
+    if (Scr_GetNumParam() != 1)
+    {
+        Scr_Error("Usage: exec(<string>)\n");
+    }
+    // VM strings are null-terminated, so no need to manually terminate
+    // the string here.
+    const char *text = Scr_GetString(0);
+    Cbuf_AddText(0, text);
+}
+
 scr_vm_functions::scr_vm_functions()
 {
+    Scr_AddFunction("exec", GScr_CbufAddText, 0);
     Scr_AddFunction("getplayerclipbrushescontainingpoint", GSCrGetPlayerclipBrushesContainingPoint, 0);
 }
 
