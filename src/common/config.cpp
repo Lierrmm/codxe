@@ -13,6 +13,7 @@ const char *DUMP_DIR = "game:\\_codxe\\dump";
 std::string Config::active_mod = "";
 bool Config::dump_rawfile = false;
 bool Config::dump_map_ents = false;
+std::string Config::mod_base_path = "";
 
 bool DirectoryExists(const char *path)
 {
@@ -56,6 +57,7 @@ Config::~Config()
 {
     // Reset to defaults on cleanup
     active_mod = "";
+    mod_base_path = "";
     dump_rawfile = false;
     dump_map_ents = false;
     DbgPrint("[codxe][Config] Configuration unloaded\n");
@@ -118,6 +120,21 @@ bool Config::LoadFromJson(const char *jsonBuffer, DWORD bufferSize)
     DbgPrint("  Dump Raw Scripts: %s\n", dump_rawfile ? "true" : "false");
     DbgPrint("  Dump Map Entities: %s\n", dump_map_ents ? "true" : "false");
 
+    // Validate and cache mod_base_path
+    if (!active_mod.empty())
+    {
+        std::string path = std::string(MOD_DIR) + "\\" + active_mod;
+        if (DirectoryExists(path.c_str()))
+        {
+            mod_base_path = path;
+        }
+        else
+        {
+            DbgPrint("[codxe][Config] Active mod directory does not exist: %s\n", path.c_str());
+            mod_base_path = "";
+        }
+    }
+
     return true;
 }
 
@@ -130,19 +147,7 @@ bool Config::LoadFromFile(const char *path)
     return LoadFromJson(jsonContent.c_str(), static_cast<DWORD>(jsonContent.size()));
 }
 
-// Helper method - requires logic beyond simple field access
 std::string Config::GetModBasePath()
 {
-    if (active_mod.empty())
-    {
-        return "";
-    }
-
-    std::string mod_base_path = std::string(MOD_DIR) + "\\" + active_mod;
-    if (!DirectoryExists(mod_base_path.c_str()))
-    {
-        DbgPrint("[codxe][Config] Active mod directory does not exist: %s\n", mod_base_path.c_str());
-        return "";
-    }
     return mod_base_path;
 }

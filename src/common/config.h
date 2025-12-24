@@ -22,6 +22,7 @@ class Config : public Module
     }
 
     static std::string active_mod;
+    static std::string mod_base_path;
     static bool dump_rawfile;
     static bool dump_map_ents;
 
