@@ -3,6 +3,7 @@
  */
 #include "pch.h"
 
+#include "g_scr_main.h"
 #include "events.h"
 #include "gsc_hud_elem.h"
 
@@ -41,7 +42,6 @@ bool Scr_CanFreeLocalizedConfigString(unsigned int index)
     return true;
 }
 
-Detour Scr_PrecacheString_Detour;
 void Scr_PrecacheString_Stub()
 {
     if (!level->initializing)
@@ -66,8 +66,6 @@ static game_hudelem_s *HECmd_GetHudElem(scr_entref_t entref)
         return 0;
     }
 }
-
-Detour HECmd_SetText_Detour;
 
 void HECmd_SetText_Stub(scr_entref_t entref)
 {
@@ -102,11 +100,10 @@ void Scr_FreeHudElem_Hook(game_hudelem_s *hud)
 
 gsc_hud_elem::gsc_hud_elem()
 {
-    Scr_PrecacheString_Detour = Detour(Scr_PrecacheString, Scr_PrecacheString_Stub);
-    Scr_PrecacheString_Detour.Install();
 
-    HECmd_SetText_Detour = Detour(HECmd_SetText, HECmd_SetText_Stub);
-    HECmd_SetText_Detour.Install();
+    // Override buildins
+    Scr_AddFunction("precachestring", Scr_PrecacheString_Stub, 0);
+    Scr_AddMethod("settext", HECmd_SetText_Stub, 0);
 
     Scr_FreeHudElem_Detour = Detour(Scr_FreeHudElem, Scr_FreeHudElem_Hook);
     Scr_FreeHudElem_Detour.Install();
@@ -121,8 +118,6 @@ gsc_hud_elem::gsc_hud_elem()
 
 gsc_hud_elem::~gsc_hud_elem()
 {
-    Scr_PrecacheString_Detour.Remove();
-    HECmd_SetText_Detour.Remove();
     Scr_FreeHudElem_Detour.Remove();
 }
 } // namespace mp
