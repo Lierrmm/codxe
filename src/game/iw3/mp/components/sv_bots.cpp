@@ -32,6 +32,7 @@ namespace mp
 struct BotMovementInfo_t
 {
     int buttons;
+    unsigned char weapon;
     bool is_mirroring_client;
     int mirror_client_num;
     float moveTo[2];
@@ -43,6 +44,15 @@ BotMovementInfo_t g_botai[MAX_CLIENTS];
 static void CleanBotArray()
 {
     ZeroMemory(&g_botai, sizeof(g_botai));
+}
+
+Detour G_SelectWeaponIndex_Detour;
+void G_SelectWeaponIndex_Hook(int clientNum, int iWeaponIndex)
+{
+    if (clientNum >= 0 && clientNum < MAX_CLIENTS)
+        g_botai[clientNum].weapon = (unsigned char)iWeaponIndex;
+
+    G_SelectWeaponIndex_Detour.GetOriginal<G_SelectWeaponIndex_t>()(clientNum, iWeaponIndex);
 }
 
 Detour SV_BotUserMove_Detour;
@@ -58,8 +68,7 @@ void SV_BotUserMove_Stub(client_t *cl)
 
     cmd.serverTime = svsHeader->time;
 
-    const playerState_s *ps = SV_GameClientNum(clientNum);
-    cmd.weapon = (unsigned char)ps->weapon;
+    cmd.weapon = g_botai[clientNum].weapon;
 
     if (g_clients[clientNum].sess.archiveTime == 0)
     {
@@ -230,6 +239,9 @@ static void Scr_BotMirror(scr_entref_t entref)
 
 sv_bots::sv_bots()
 {
+    G_SelectWeaponIndex_Detour = Detour(G_SelectWeaponIndex, G_SelectWeaponIndex_Hook);
+    G_SelectWeaponIndex_Detour.Install();
+
     SV_BotUserMove_Detour = Detour(SV_BotUserMove, SV_BotUserMove_Stub);
     SV_BotUserMove_Detour.Install();
 
@@ -243,6 +255,7 @@ sv_bots::sv_bots()
 
 sv_bots::~sv_bots()
 {
+    G_SelectWeaponIndex_Detour.Remove();
     SV_BotUserMove_Detour.Remove();
 }
 } // namespace mp

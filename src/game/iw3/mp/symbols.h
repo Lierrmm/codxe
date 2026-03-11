@@ -350,6 +350,12 @@ static G_LocalizedStringIndex_t G_LocalizedStringIndex = reinterpret_cast<G_Loca
 typedef char *(*Scr_GetIString_t)(unsigned int index);
 static Scr_GetIString_t Scr_GetIString = reinterpret_cast<Scr_GetIString_t>(0x8220FE90);
 
+typedef void (*SV_UserinfoChanged_t)(client_t *cl);
+static SV_UserinfoChanged_t SV_UserinfoChanged = reinterpret_cast<SV_UserinfoChanged_t>(0x82205DC0);
+
+typedef void (*G_SelectWeaponIndex_t)(int clientNum, int iWeaponIndex);
+static G_SelectWeaponIndex_t G_SelectWeaponIndex = reinterpret_cast<G_SelectWeaponIndex_t>(0x8235AA98);
+
 // Variables
 static auto cgArray = reinterpret_cast<cg_s **>(0x823F28A0);
 static auto cgsArray = reinterpret_cast<cgs_t *>(0x823F2890);
