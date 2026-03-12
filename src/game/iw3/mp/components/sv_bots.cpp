@@ -288,6 +288,69 @@ static void GScr_AddTestClient()
         Scr_AddEntityNum(ent->s.number, 0);
 }
 
+Detour SV_CalcPings_Detour;
+void SV_CalcPings_Stub()
+{
+    static const dvar_s *sv_maxclients = Dvar_FindMalleableVar("sv_maxclients");
+
+    for (int i = 0; i < sv_maxclients->current.integer; i++)
+    {
+        client_t *cl = &svs->clients[i];
+
+        if (cl->header.state != CS_ACTIVE)
+        {
+            cl->ping = -1;
+            continue;
+        }
+        if (!cl->gentity)
+        {
+            cl->ping = 1;
+            continue;
+        }
+        if (cl->header.netchan.remoteAddress.type == NA_BOT)
+        {
+            cl->ping = 0;
+            cl->lastPacketTime = svs->time;
+            continue;
+        }
+
+        int count = 0;
+        int total = 0;
+        int delta;
+        for (int j = 0; j < PACKET_BACKUP; j++)
+        {
+            if (cl->frames[j].messageAcked == 0xFFFFFFFF)
+            {
+                continue;
+            }
+            delta = cl->frames[j].messageAcked - cl->frames[j].messageSent;
+            count++;
+            total += delta;
+        }
+        for (int j = 0; j < PACKET_BACKUP; j++)
+        {
+            const clientSnapshot_t *frame = &cl->frames[j];
+            if (frame->messageAcked > 0)
+            {
+                count++;
+                total += frame->messageAcked - frame->messageSent;
+            }
+        }
+        if (!count)
+        {
+            cl->ping = 999;
+        }
+        else
+        {
+            cl->ping = total / count;
+            if (cl->ping > 999)
+            {
+                cl->ping = 999;
+            }
+        }
+    }
+}
+
 sv_bots::sv_bots()
 {
     G_SelectWeaponIndex_Detour = Detour(G_SelectWeaponIndex, G_SelectWeaponIndex_Hook);
@@ -298,6 +361,9 @@ sv_bots::sv_bots()
 
     SV_UserinfoChanged_Detour = Detour(SV_UserinfoChanged, SV_UserinfoChanged_Hook);
     SV_UserinfoChanged_Detour.Install();
+
+    SV_CalcPings_Detour = Detour(SV_CalcPings, SV_CalcPings_Stub);
+    SV_CalcPings_Detour.Install();
 
     Scr_AddFunction("addtestclient", GScr_AddTestClient, 0);
 
@@ -313,8 +379,8 @@ sv_bots::~sv_bots()
 {
     G_SelectWeaponIndex_Detour.Remove();
     SV_BotUserMove_Detour.Remove();
-
     SV_UserinfoChanged_Detour.Remove();
+    SV_CalcPings_Detour.Remove();
 }
 } // namespace mp
 } // namespace iw3

@@ -137,6 +137,38 @@ enum entity_event_t : __int32
     EV_MAX_EVENTS = 0x8D,
 };
 
+enum Vartype_t : __int32
+{
+    VAR_UNDEFINED = 0x0,
+    VAR_BEGIN_REF = 0x1,
+    VAR_POINTER = 0x1,
+    VAR_STRING = 0x2,
+    VAR_ISTRING = 0x3,
+    VAR_VECTOR = 0x4,
+    VAR_END_REF = 0x5,
+    VAR_FLOAT = 0x5,
+    VAR_INTEGER = 0x6,
+    VAR_CODEPOS = 0x7,
+    VAR_PRECODEPOS = 0x8,
+    VAR_FUNCTION = 0x9,
+    VAR_STACK = 0xA,
+    VAR_ANIMATION = 0xB,
+    VAR_DEVELOPER_CODEPOS = 0xC,
+    VAR_INCLUDE_CODEPOS = 0xD,
+    VAR_THREAD = 0xE,
+    VAR_NOTIFY_THREAD = 0xF,
+    VAR_TIME_THREAD = 0x10,
+    VAR_CHILD_THREAD = 0x11,
+    VAR_OBJECT = 0x12,
+    VAR_DEAD_ENTITY = 0x13,
+    VAR_ENTITY = 0x14,
+    VAR_ARRAY = 0x15,
+    VAR_DEAD_THREAD = 0x16,
+    VAR_COUNT = 0x17,
+    VAR_THREAD_LIST = 0x18,
+    VAR_ENDON_LIST = 0x19,
+};
+
 // TODO: verify fields
 struct DxGlobals
 {
@@ -629,7 +661,7 @@ struct playerState_s
         return (weapon == weaponIndex);
     }
 };
-
+static_assert(sizeof(playerState_s) == 12136, "");
 static_assert(offsetof(playerState_s, velocity) == 40, "");
 static_assert(offsetof(playerState_s, groundEntityNum) == 112, "");
 static_assert(offsetof(playerState_s, jumpOriginZ) == 132, "");
@@ -1617,7 +1649,6 @@ const struct clientHeader_t
 
 static_assert(offsetof(clientHeader_t, deltaMessage) == 0x8, "");
 
-/* 9760 */
 struct svscmd_info_t
 {
     char cmd[1024];
@@ -1625,6 +1656,20 @@ struct svscmd_info_t
     int type;
 };
 
+struct clientSnapshot_t
+{
+    playerState_s ps;
+    int num_entities;
+    int num_clients;
+    int first_entity;
+    int first_client;
+    int messageSent;
+    int messageAcked;
+    int messageSize;
+    int serverTime;
+};
+
+#define PACKET_BACKUP 32
 struct __declspec(align(4)) client_t
 {
     clientHeader_t header;
@@ -1637,14 +1682,43 @@ struct __declspec(align(4)) client_t
     int messageAcknowledge;
     int gamestateMessageNum;
     int challenge;
-    usercmd_s lastUsercmd;              // 0x20E5C, 0x0020
-    int lastClientCommand;              // 0x20E7C, 0x0004
-    char lastClientCommandString[1024]; // 0x20E80, 0x0004
-    gentity_s *gentity;                 // 0x21280, 0x0004
-    char name[32];                      // 0x21284, 0x0020
-    char _padding[0x819e4];             // Padding to reach 666760 bytes
+    usercmd_s lastUsercmd;
+    int lastClientCommand;
+    char lastClientCommandString[1024];
+    gentity_s *gentity;
+    char name[32];
+    char clanAbbrev[5];
+    char downloadName[64];
+    void *download;
+    int downloadSize;
+    int downloadCount;
+    int downloadClientBlock;
+    int downloadCurrentBlock;
+    int downloadXmitBlock;
+    unsigned __int8 *downloadBlocks[8];
+    int downloadBlockSize[8];
+    int downloadEOF;
+    int downloadSendTime;
+    int nextReliableTime;
+    int lastPacketTime;
+    int lastConnectTime;
+    int nextSnapshotTime;
+    int timeoutCount;
+    clientSnapshot_t frames[PACKET_BACKUP];
+    int ping;
+    int rate;
+    int snapshotMsec;
+    int pureAuthentic;
+    char netchanOutgoingBuffer[131072];
+    char netchanIncomingBuffer[2048];
+    int guid;
+    unsigned __int16 scriptId;
+    int bIsTestClient;
+    int serverId;
+    int natType;
+    unsigned __int8 stats[8192];
+    unsigned __int8 statPacketsReceived;
 };
-
 static_assert(sizeof(client_t) == 666760, "");
 static_assert(offsetof(client_t, gentity) == 0x21280, "");
 

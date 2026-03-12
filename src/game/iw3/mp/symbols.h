@@ -362,6 +362,25 @@ static Scr_AddEntityNum_t Scr_AddEntityNum = reinterpret_cast<Scr_AddEntityNum_t
 typedef void (*G_SelectWeaponIndex_t)(int clientNum, int iWeaponIndex);
 static G_SelectWeaponIndex_t G_SelectWeaponIndex = reinterpret_cast<G_SelectWeaponIndex_t>(0x8235AA98);
 
+typedef int (*Scr_GetType_t)(unsigned int index);
+static Scr_GetType_t Scr_GetType = reinterpret_cast<Scr_GetType_t>(0x8220F858);
+
+typedef float (*Scr_GetFloat_t)(unsigned int index);
+static Scr_GetFloat_t Scr_GetFloat = reinterpret_cast<Scr_GetFloat_t>(0x8220FC18);
+
+typedef int (*Scr_AddFloat_t)(float value);
+static Scr_AddFloat_t Scr_AddFloat = reinterpret_cast<Scr_AddFloat_t>(0x82211148);
+
+typedef void (*SV_DropClient_t)(client_t *drop, const char *reason, bool tellThem);
+static SV_DropClient_t SV_DropClient = reinterpret_cast<SV_DropClient_t>(0x82206880);
+
+typedef void (*SV_CalcPings_t)();
+static SV_CalcPings_t SV_CalcPings = reinterpret_cast<SV_CalcPings_t>(0x821FEE90);
+
+typedef int (*CL_ConsolePrint_AddLine_t)(int localClientNum, int channel, const char *txt, unsigned int duration,
+                                         unsigned int pixelWidth, char color, int flags);
+static CL_ConsolePrint_AddLine_t CL_ConsolePrint_AddLine = reinterpret_cast<CL_ConsolePrint_AddLine_t>(0x822E1EB8);
+
 // Variables
 static auto cgArray = reinterpret_cast<cg_s **>(0x823F28A0);
 static auto cgsArray = reinterpret_cast<cgs_t *>(0x823F2890);
@@ -404,6 +423,7 @@ static int *g_poolSize = reinterpret_cast<int *>(0x823A3E50);
 static auto level = reinterpret_cast<level_locals_t *>(0x82A07650);
 static auto sv = reinterpret_cast<server_t *>(0x82E83820);
 static auto g_hudelems = reinterpret_cast<game_hudelem_s *>(0x8284FD00);
+static const char **var_typename = reinterpret_cast<const char **>(0x823A2820);
 
 static int *g_trackLoadProgress = reinterpret_cast<int *>(0x824754FC);
 static int *g_totalSize = reinterpret_cast<int *>(0x824754F8);
