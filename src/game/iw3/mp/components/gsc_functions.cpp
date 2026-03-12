@@ -235,6 +235,42 @@ void GScr_CbufAddText()
     Cbuf_AddText(0, text);
 }
 
+void Scr_IsArray_f()
+{
+    if (Scr_GetNumParam() != 1)
+    {
+        Scr_Error("usage: isArray(<variable>)");
+        return;
+    }
+
+    Scr_AddInt(Scr_GetType(0) == 1);
+}
+
+void GScr_Float()
+{
+    if (Scr_GetNumParam() != 1)
+    {
+        Scr_Error("Usage: floatVal = float(<float, int, bool or string>);");
+        return;
+    }
+
+    int varType = Scr_GetType(0);
+    if (varType == VAR_FLOAT)
+        Scr_AddFloat(Scr_GetFloat(0));
+    else if (varType == VAR_INTEGER)
+        Scr_AddFloat(1.0f * Scr_GetInt(0));
+    else if (varType == VAR_STRING)
+    {
+        char *strFloat = Scr_GetString(0);
+        double result = 0.0;
+        if (isdigit(strFloat[0]) || (strFloat[0] == '-' && isdigit(strFloat[1])))
+            result = atof(strFloat);
+        Scr_AddFloat((float)result);
+    }
+    else
+        Scr_ParamError(0, va("cannot cast %s to float", var_typename[varType]));
+}
+
 gsc_functions::gsc_functions()
 {
     Scr_AddFunction("exec", GScr_CbufAddText, 0);
@@ -244,6 +280,8 @@ gsc_functions::gsc_functions()
     Scr_AddFunction("fs_fclose", GScr_FS_FClose, 0);
     Scr_AddFunction("fs_readline", GScr_FS_ReadLine, 0);
     Scr_AddFunction("fs_writeline", GScr_FS_WriteLine, 0);
+    Scr_AddFunction("isarray", Scr_IsArray_f, false);
+    Scr_AddFunction("float", GScr_Float, 0);
 
     Events::OnVMShutdown(CloseAllScriptFiles);
 }
