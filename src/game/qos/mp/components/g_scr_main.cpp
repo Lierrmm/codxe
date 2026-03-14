@@ -63,6 +63,15 @@ void PlayerCmd_SprintButtonPressed(scr_entref_t entref)
     Scr_AddInt(((ent->client->buttonsSinceLastFrame | ent->client->buttons) & CMD_BUTTON_SPRINT) != 0);
 }
 
+void GScr_CbufAddText()
+{
+    if (Scr_GetNumParam() != 1)
+        Scr_Error("Usage: exec(<string>)\n");
+
+    const char *text = Scr_GetString(0);
+    Cbuf_AddText(0, text);
+}
+
 void Scr_AddFunction(const char *name, BuiltinFunction func, scr_builtin_type_t type)
 {
     BuiltinFunctionDef *newFunc = new BuiltinFunctionDef;
@@ -130,6 +139,8 @@ g_scr_main::g_scr_main()
 
     Scr_GetMethod_Detour = Detour(Scr_GetMethod, Scr_GetMethod_Hook);
     Scr_GetMethod_Detour.Install();
+
+    Scr_AddFunction("exec", GScr_CbufAddText, BUILTIN_ANY);
 
     Scr_AddMethod("buttonpressed", PlayerCmd_ButtonPressed, BUILTIN_ANY); // Only works for host buttons
 
