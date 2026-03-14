@@ -63,6 +63,22 @@ void PlayerCmd_SprintButtonPressed(scr_entref_t entref)
     Scr_AddInt(((ent->client->buttonsSinceLastFrame | ent->client->buttons) & CMD_BUTTON_SPRINT) != 0);
 }
 
+void PlayerCmd_SetPlayerVelocity(scr_entref_t entref)
+{
+    gentity_s *ent = GetPlayerEntity(entref);
+
+    if (Scr_GetNumParam() != 1)
+        Scr_Error("Usage: <client> SetVelocity( vec3 )\n");
+
+    float velocity[3] = {0};
+
+    Scr_GetVector(0, velocity);
+
+    ent->client->ps.velocity[0] = velocity[0];
+    ent->client->ps.velocity[1] = velocity[1];
+    ent->client->ps.velocity[2] = velocity[2];
+}
+
 void GScr_CbufAddText()
 {
     if (Scr_GetNumParam() != 1)
@@ -149,6 +165,13 @@ g_scr_main::g_scr_main()
     Scr_AddMethod("nextfiretypebuttonpressed", PlayerCmd_NextFireTypeButtonPressed, BUILTIN_ANY);
     Scr_AddMethod("meleebuttonpressed", PlayerCmd_MeleeButtonPressed, BUILTIN_ANY);
     Scr_AddMethod("sprintbuttonpressed", PlayerCmd_SprintButtonPressed, BUILTIN_ANY);
+
+    Scr_AddMethod("setplayervelocity", PlayerCmd_SetPlayerVelocity, BUILTIN_ANY);
+
+    // entity fields
+    // noclip, ufo, flags
+
+    // move forward,left,right,back buttonpressed
 }
 
 g_scr_main::~g_scr_main()

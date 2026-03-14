@@ -50,9 +50,17 @@ struct BuiltinMethodDef
     scr_builtin_type_t type;
 };
 
+struct playerState_s
+{
+    char pad_0[44];
+    float velocity[3];
+};
+static_assert(offsetof(playerState_s, velocity) == 44, "");
+
 struct gclient_s
 {
-    char pad_0[13252];
+    playerState_s ps;
+    char pad_0[13196];
     int noclip;
     int ufo;
     char pad0[8];
