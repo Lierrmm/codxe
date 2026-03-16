@@ -40,6 +40,10 @@ static auto Scr_GetInt = reinterpret_cast<Scr_GetInt_t>(0x82283F08);
 
 typedef void (*GScr_AddFieldsForClient_t)();
 static GScr_AddFieldsForClient_t GScr_AddFieldsForClient = reinterpret_cast<GScr_AddFieldsForClient_t>(0x82217578);
+
+typedef void (*GScr_AddFieldsForEntity_t)();
+static GScr_AddFieldsForEntity_t GScr_AddFieldsForEntity = reinterpret_cast<GScr_AddFieldsForEntity_t>(0x82245838);
+
 static auto Scr_AddClassField =
     reinterpret_cast<void (*)(unsigned int classnum, const char *name, unsigned __int16 offset)>(0x8227C818);
 

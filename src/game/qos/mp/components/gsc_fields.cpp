@@ -12,9 +12,24 @@ namespace qos
 namespace mp
 {
 
+void ClientScr_SetEntityFlags(gclient_s *pSelf, const client_fields_s *pField)
+{
+    gentity_s *ent = &g_entities[pSelf - *level_clients];
+    ent->flags = Scr_GetInt(0);
+}
+
+void ClientScr_GetEntityFlags(gclient_s *pSelf, const client_fields_s *field)
+{
+    const gentity_s *ent = &g_entities[pSelf - *level_clients];
+    Scr_AddInt(ent->flags);
+}
+
 client_fields_s custom_client_fields[] = {
     {"noclip", offsetof(gclient_s, noclip), F_INT, nullptr, nullptr},
     {"ufo", offsetof(gclient_s, ufo), F_INT, nullptr, nullptr},
+
+    // this should be done on the entity fields but cba
+    {"entityflags", NULL, F_INT, ClientScr_SetEntityFlags, ClientScr_GetEntityFlags},
 };
 
 Detour GScr_AddFieldsForClient_Detour;
