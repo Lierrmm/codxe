@@ -47,7 +47,7 @@ void R_DrawAllDynEnt_Hook(const GfxViewInfo *viewInfo)
 
 void DrawBranding()
 {
-    const char *brandingWithBuild = branding::GetBrandingString(branding::GAME_IW3, branding::MODE_MP);
+    const char *brandingWithBuild = branding::GetBrandingString();
 
     static Font_s *font = R_RegisterFont("fonts/consoleFont");
     float color[4] = {1.0, 1.0, 1.0, 0.4};
