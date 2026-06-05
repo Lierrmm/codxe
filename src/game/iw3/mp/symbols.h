@@ -51,9 +51,24 @@ static auto CL_CM_LoadMap = reinterpret_cast<void (*)(const char *name)>(0x822E6
 static auto CM_LoadMap = reinterpret_cast<void (*)(const char *name, unsigned int *checksum)>(0x82243940);
 static auto CL_ConsolePrint = reinterpret_cast<void (*)(int localClientNum, int channel, const char *txt, int duration,
                                                         int pixelWidth, int flags)>(0x822E4D18);
+typedef void (*CL_CharEvent_t)(int localClientNum, int key);
+static CL_CharEvent_t CL_CharEvent = reinterpret_cast<CL_CharEvent_t>(0x822D77F8);
+
+typedef void (*Field_AdjustScroll_t)(const ScreenPlacement *scrPlace, field_t *edit);
+static Field_AdjustScroll_t Field_AdjustScroll = reinterpret_cast<Field_AdjustScroll_t>(0x822D6E70);
+
 static auto CL_GamepadButtonEvent =
     reinterpret_cast<void (*)(int localClientNum, int controllerIndex, int key, int down, unsigned int time)>(
         0x822DD1E8);
+
+typedef void (*CL_Input_t)(int localClientNum);
+static CL_Input_t CL_Input = reinterpret_cast<CL_Input_t>(0x822DCBC8);
+
+typedef void (*Con_Close_t)(int localClientNum);
+static Con_Close_t Con_Close = reinterpret_cast<Con_Close_t>(0x822DFC38);
+
+typedef int (*Con_CancelAutoComplete_t)();
+static Con_CancelAutoComplete_t Con_CancelAutoComplete = reinterpret_cast<Con_CancelAutoComplete_t>(0x822DF3B0);
 
 static auto ClientCommand = reinterpret_cast<void (*)(int clientNum)>(0x8227DCF0);
 static auto ClientThink = reinterpret_cast<void (*)(int clientNum)>(0x822886E8);
@@ -83,8 +98,6 @@ static auto Cmd_AddCommandInternal =
     reinterpret_cast<void (*)(const char *cmdName, void (*function)(), cmd_function_s *allocedCmd)>(0x8223ADE0);
 static auto Cmd_ExecFromFastFile =
     reinterpret_cast<bool (*)(int localClientNum, int controllerIndex, const char *filename)>(0x8223AF40);
-static auto Cmd_ExecuteSingleCommand =
-    reinterpret_cast<void (*)(int localClientNum, int controllerIndex, const char *text)>(0x8223A7A0);
 
 static auto CheatsOk = reinterpret_cast<int (*)(gentity_s *ent)>(0x8227BF40);
 
@@ -199,6 +212,9 @@ static auto SV_SetBrushModel = reinterpret_cast<int (*)(gentity_s *ent)>(0x82205
 static auto SV_UnlinkEntity = reinterpret_cast<void (*)(gentity_s *ent)>(0x82355F08);
 
 static auto Sys_SnapVector = reinterpret_cast<void (*)(float *result)>(0x821A3BD0);
+
+typedef unsigned int (*Sys_Milliseconds_t)();
+static Sys_Milliseconds_t Sys_Milliseconds = reinterpret_cast<Sys_Milliseconds_t>(0x821A3C70);
 
 static auto TeleportPlayer = reinterpret_cast<void (*)(gentity_s *player, float *origin, float *angles)>(0x8226F408);
 
@@ -427,6 +443,11 @@ static auto cgsArray = reinterpret_cast<cgs_t *>(0x823F2890);
 static auto clients = reinterpret_cast<clientActive_t **>(0x82435AB8);
 static auto clientConnections = reinterpret_cast<clientConnection_t *>(0x824302E0);
 static auto clientUIActives = reinterpret_cast<clientUIActive_t *>(0x82435A10);
+static auto con = reinterpret_cast<Console *>(0x82407590);
+static auto g_consoleField = reinterpret_cast<field_t *>(0x8242AA18);
+static auto g_console_field_width = reinterpret_cast<int *>(0x823A52F4);
+static auto g_console_char_height = reinterpret_cast<float *>(0x823A52F8);
+static auto historyEditLines = reinterpret_cast<field_t *>(0x8242DFD8);
 static auto cg_pmove = reinterpret_cast<pmove_t *>(0x823F6040);
 static auto cm = reinterpret_cast<clipMap_t *>(0x82A23240);
 static auto cmd_functions = reinterpret_cast<cmd_function_s *>(0x82A2335C);
@@ -435,6 +456,7 @@ static auto dx = reinterpret_cast<DxGlobals *>(0x84CD7A80);
 static auto entity_fields = reinterpret_cast<ent_field_t *>(0x82046E00);
 static auto g_clients = reinterpret_cast<gclient_s *>(0x829BCD70);
 static auto g_entities = reinterpret_cast<gentity_s *>(0x8287CD08);
+static ScreenPlacement &scrPlaceFull = *reinterpret_cast<ScreenPlacement *>(0x8246F420);
 static ScreenPlacement &scrPlaceFullUnsafe = *reinterpret_cast<ScreenPlacement *>(0x8246F468);
 static auto svsHeader = reinterpret_cast<serverStaticHeader_t *>(0x849F1580);
 static serverStatic_t *svs = reinterpret_cast<serverStatic_t *>(0x82EE3500);
@@ -473,6 +495,17 @@ static int *g_totalSize = reinterpret_cast<int *>(0x824754F8);
 static int *g_loadedSize = reinterpret_cast<int *>(0x82475500);
 static int *g_totalExternalBytes = reinterpret_cast<int *>(0x82475504);
 static int *g_loadedExternalBytes = reinterpret_cast<int *>(0x8246F4AC);
+
+void Con_ToggleConsole();
+void Con_ToggleConsoleOutput();
+void Con_Bottom();
+void Con_Top();
+void Con_PageDown();
+void Con_PageUp();
+void Console_SubmitInput(int localClientNum);
+void Console_HistoryNext();
+void Console_HistoryPrev();
+bool CL_IsConsoleKey(int key);
 
 } // namespace mp
 } // namespace iw3
