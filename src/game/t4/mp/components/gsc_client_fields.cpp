@@ -105,10 +105,15 @@ Detour Scr_GetObjectField_Detour;
 
 void Scr_GetObjectField_Hook(unsigned int classnum, int entnum, int offset, scriptInstance_t inst)
 {
-    auto ent = &g_entities[entnum];
     // Check if the offset is a client field
     if (classnum == 0 && (offset & CLIENT_FIELD_MASK) == CLIENT_FIELD_MASK)
     {
+        auto ent = &g_entities[entnum];
+        if (!ent->client)
+        {
+            return;
+        }
+
         auto field = &client_fields_extended[offset & ~CLIENT_FIELD_MASK];
         if (field->getter)
             field->getter(ent->client, field);
