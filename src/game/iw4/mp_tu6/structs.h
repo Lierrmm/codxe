@@ -1048,7 +1048,9 @@ struct client_t
     gentity_s *gentity;
     char name[32];
     char clanAbbrev[5];
-    char pad_212BD[0x97F80 - 0x212BD];
+    char pad_212BD[0x212D4 - 0x212BD];
+    int ping;
+    char pad_212D8[0x97F80 - 0x212D8];
 };
 static_assert(sizeof(client_t) == 0x97F80, "");
 static_assert(offsetof(client_t, header) == 0x0, "");
@@ -1058,6 +1060,7 @@ static_assert(offsetof(client_t, userinfo) == 0x650, "");
 static_assert(offsetof(client_t, gentity) == 0x21294, "");
 static_assert(offsetof(client_t, name) == 0x21298, "");
 static_assert(offsetof(client_t, clanAbbrev) == 0x212B8, "");
+static_assert(offsetof(client_t, ping) == 0x212D4, "");
 
 struct serverStaticHeader_t
 {

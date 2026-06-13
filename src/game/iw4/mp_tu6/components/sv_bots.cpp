@@ -117,6 +117,19 @@ static void SV_BotUserMove_Stub(client_t *cl)
     SV_ClientThink(cl, &cmd);
 }
 
+static Detour SV_CalcPings_Detour;
+
+static void SV_CalcPings_Hook()
+{
+    SV_CalcPings_Detour.GetOriginal<SV_CalcPings_t>()();
+
+    for (int i = 0; i < svsHeader->clientCount && i < IW4_MAX_CLIENTS; ++i)
+    {
+        if (SV_IsClientBot(i) != FALSE)
+            svsHeader->clients[i].ping = 0;
+    }
+}
+
 static void GScr_AddTestClient()
 {
     if (Scr_GetNumParam() > 1)
@@ -316,6 +329,9 @@ SVBots::SVBots()
     SV_BotUserMove_Detour = Detour(SV_BotUserMove, SV_BotUserMove_Stub);
     SV_BotUserMove_Detour.Install();
 
+    SV_CalcPings_Detour = Detour(SV_CalcPings, SV_CalcPings_Hook);
+    SV_CalcPings_Detour.Install();
+
     Scr_AddFunction("addtestclient", GScr_AddTestClient, BUILTIN_ANY);
 
     Scr_AddMethod("botaction", PlayerCmd_BotAction, BUILTIN_ANY);
@@ -330,6 +346,7 @@ SVBots::~SVBots()
 {
     G_SelectWeaponIndex_Detour.Remove();
     SV_BotUserMove_Detour.Remove();
+    SV_CalcPings_Detour.Remove();
 
     CleanBotArray();
 }
