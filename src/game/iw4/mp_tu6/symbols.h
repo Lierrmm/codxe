@@ -41,8 +41,7 @@ static auto Cmd_AddCommandInternal =
     reinterpret_cast<void (*)(const char *cmdName, void (*function)(), cmd_function_s *allocedCmd)>(0x82276758);
 
 typedef void (*Cmd_ExecuteSingleCommand_t)(int localClientNum, int controllerIndex, const char *text);
-static Cmd_ExecuteSingleCommand_t Cmd_ExecuteSingleCommand =
-    reinterpret_cast<Cmd_ExecuteSingleCommand_t>(0x82277928);
+static Cmd_ExecuteSingleCommand_t Cmd_ExecuteSingleCommand = reinterpret_cast<Cmd_ExecuteSingleCommand_t>(0x82277928);
 
 static auto Cmd_Init = reinterpret_cast<void (*)()>(0x82278048);
 
@@ -207,6 +206,9 @@ static SV_ClientThink_t SV_ClientThink = reinterpret_cast<SV_ClientThink_t>(0x82
 
 typedef void (*SV_BotUserMove_t)(client_t *cl);
 static SV_BotUserMove_t SV_BotUserMove = reinterpret_cast<SV_BotUserMove_t>(0x822C3208);
+
+typedef void (*SV_CalcPings_t)();
+static SV_CalcPings_t SV_CalcPings = reinterpret_cast<SV_CalcPings_t>(0x822C2910);
 
 typedef BOOL (*SV_IsClientBot_t)(int clientNum);
 static SV_IsClientBot_t SV_IsClientBot = reinterpret_cast<SV_IsClientBot_t>(0x822C3B10);

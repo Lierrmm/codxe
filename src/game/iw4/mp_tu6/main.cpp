@@ -10,6 +10,7 @@
 #include "components/patches.h"
 #include "components/pm.h"
 #include "components/scr_parser.h"
+#include "components/stats.h"
 #include "components/sv_bots.h"
 #include "main.h"
 
@@ -32,6 +33,7 @@ IW4_MP_TU6_Plugin::IW4_MP_TU6_Plugin()
     RegisterModule(new patches());
     RegisterModule(new pm());
     RegisterModule(new scr_parser());
+    RegisterModule(new stats());
     RegisterModule(new SVBots());
 }
 

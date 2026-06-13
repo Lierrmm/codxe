@@ -118,9 +118,6 @@ GameWorldMp *gameWorldMp = reinterpret_cast<GameWorldMp *>(0x82DFD010);
 typedef int (*Com_sprintf_t)(char *dest, unsigned int size, const char *fmt, ...);
 Com_sprintf_t Com_sprintf = reinterpret_cast<Com_sprintf_t>(0x82315F20);
 
-typedef XAssetHeader *(*DB_FindXAssetHeader_t)(XAssetType type, const char *name);
-DB_FindXAssetHeader_t DB_FindXAssetHeader = reinterpret_cast<DB_FindXAssetHeader_t>(0x821E25B0);
-
 typedef const char *(*DB_GetXAssetName_t)(const XAsset *asset);
 DB_GetXAssetName_t DB_GetXAssetName = reinterpret_cast<DB_GetXAssetName_t>(0x821AEFD8);
 
