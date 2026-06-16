@@ -1,6 +1,4 @@
 #include "pch.h"
-#include <cctype>
-#include <stdlib.h>
 #include "events.h"
 #include "stats.h"
 
@@ -53,7 +51,7 @@ bool HasText(const char *text)
 std::string ToLower(std::string value)
 {
     std::transform(value.begin(), value.end(), value.begin(),
-                   [](char c) { return static_cast<char>(std::tolower(static_cast<unsigned char>(c))); });
+                   [](char c) { return static_cast<char>(tolower(static_cast<unsigned char>(c))); });
     return value;
 }
 
